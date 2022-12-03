@@ -5,14 +5,13 @@ import BallotAbi from '../artifacts/Ballot.json';
 import BasicNftAbi from '../artifacts/BasicNft.json';
 import { Ballot } from './interfaces/contracts/Ballot';
 import { BasicNft } from './interfaces/contracts/BasicNft';
-import 'dotenv/config';
 
-const ballotAddress = '0x12901a6217Fa4f91341DB6EAeDD5CEd128F8D518';
-const basicNftAddress = '0xBe26a0fe741616299C5a75C6E6d20FDD579831AE';
+const ballotAddress = import.meta.env.VITE_BALLOT_ADDRESS;
+const accessNftAddress = import.meta.env.VITE_ACCESS_NFT_ADDRESS;
 
 function App() {
-  const [count, setCount] = useState(0);
   const [voteOption, setVoteOption] = useState<number>();
+  const [winningProposal, setWinningProposal] = useState<number>();
 
   const requestAccount = async () => {
     await window.ethereum.request({ method: 'eth_requestAccounts' });
@@ -26,14 +25,13 @@ function App() {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
       const contract: BasicNft = new ethers.Contract(
-        basicNftAddress,
+        accessNftAddress,
         BasicNftAbi.abi,
         signer
       );
       try {
         const transaction = await contract.mintNft();
         transaction.wait(1);
-        console.log('Winning proposal data: ', transaction.data);
       } catch (error) {
         console.log('Error: ', error);
       }
@@ -50,6 +48,7 @@ function App() {
       );
       try {
         const data = await contract.winningProposal();
+        setWinningProposal(data);
         console.log('Winning proposal data: ', data.toNumber());
       } catch (error) {
         console.log('Error: ', error);
@@ -81,19 +80,14 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Blockchain voting system</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-      </div>
       <button onClick={requestAccount}>Connect wallet</button>
-      <br />
       <button onClick={mintNft}>Mint Nft</button>
-      <br />
+      <h1>Blockchain voting system</h1>
+      <div className="card"></div>
       <label>
         Option 1: John, Option 2: Fred:{' '}
         <input
+          placeholder="option"
           type="number"
           onChange={(event) => setVoteOption(parseInt(event.target.value))}
         />
