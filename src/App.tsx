@@ -77,6 +77,7 @@ function App() {
       }
     }
   };
+  console.assert(winningProposal !== undefined, 'Winning proposal is undefined')
 
   return (
     <div className="App">
