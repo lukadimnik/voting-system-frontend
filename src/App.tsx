@@ -15,6 +15,7 @@ function App() {
 
   const requestAccount = async () => {
     await window.ethereum.request({ method: 'eth_requestAccounts' });
+    console.assert(window.ethereum.selectedAddress !== undefined, 'No account selected')
   };
 
   const mintNft = async () => {
