@@ -25,11 +25,11 @@ function App() {
       await requestAccount();
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
-      const contract: BasicNft = new ethers.Contract(
+      const contract = new ethers.Contract(
         accessNftAddress,
         BasicNftAbi.abi,
         signer
-      );
+      ) as BasicNft;
       try {
         const transaction = await contract.mintNft();
         transaction.wait(1);
@@ -42,14 +42,14 @@ function App() {
   const fetchWinningProposal = async () => {
     if (typeof window.ethereum !== 'undefined') {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const contract: Ballot = new ethers.Contract(
+      const contract = new ethers.Contract(
         ballotAddress,
         BallotAbi.abi,
         provider
-      );
+      ) as Ballot;
       try {
         const data = await contract.winningProposal();
-        setWinningProposal(data);
+        setWinningProposal(data.toNumber());
         console.log('Winning proposal data: ', data.toNumber());
       } catch (error) {
         console.log('Error: ', error);
@@ -63,11 +63,11 @@ function App() {
       await requestAccount();
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
-      const contract: Ballot = new ethers.Contract(
+      const contract = new ethers.Contract(
         ballotAddress,
         BallotAbi.abi,
         signer
-      );
+      ) as Ballot;
       try {
         const transaction = await contract.vote(voteOption);
         transaction.wait(2);
